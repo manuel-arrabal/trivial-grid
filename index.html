@@ -1,4 +1,4 @@
-Put your HTML text <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -70,44 +70,47 @@ Put your HTML text <!DOCTYPE html>
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1fr;
-      grid-template-rows: repeat(12, 1fr);
+      grid-auto-rows: 80px;
       gap: 12px;
       margin-bottom: 28px;
     }
 
-    .category-cell {
-      grid-row: 1;
+    .category-question {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    .category-label {
       background: rgba(99,102,241,0.15);
       border: 2px solid rgba(99,102,241,0.3);
-      border-radius: 12px;
-      padding: 12px 8px;
-      font-size: 0.8rem;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #1e293b;
       text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    .question-cell {
-      grid-row: 2;
+    .question-text {
       background: rgba(248,250,252,0.8);
       border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 16px 12px;
-      font-size: 0.85rem;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.8rem;
       font-weight: 500;
       text-align: center;
       line-height: 1.3;
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s ease;
+      flex: 1;
     }
 
-    .question-cell.active {
+    .question-text.active {
       opacity: 1;
       visibility: visible;
     }
@@ -115,7 +118,6 @@ Put your HTML text <!DOCTYPE html>
     .option {
       border: 2px solid #e2e8f0;
       border-radius: 12px;
-      height: 64px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -178,8 +180,8 @@ Put your HTML text <!DOCTYPE html>
 
     @media (max-width: 480px) {
       .grid { gap: 10px; }
-      .option { height: 56px; font-size: 0.8rem; }
-      .question-cell { font-size: 0.82rem; padding: 12px 8px; }
+      .option { font-size: 0.8rem; padding: 6px; }
+      .question-text { font-size: 0.78rem; padding: 6px; }
     }
   </style>
 </head>
@@ -220,32 +222,30 @@ Put your HTML text <!DOCTYPE html>
       grid.innerHTML = '';
 
       categories.forEach((cat, catIndex) => {
-        const rowStart = catIndex * 2 + 1;
+        // Columna 1: Categoría + Pregunta
+        const catQuestion = document.createElement('div');
+        catQuestion.className = 'category-question';
+        catQuestion.dataset.category = catIndex;
+        catQuestion.id = `cat-${catIndex}`;
 
-        // Categoría (fila 1 de cada par)
-        const categoryCell = document.createElement('div');
-        categoryCell.className = 'category-cell';
-        categoryCell.style.gridRow = rowStart;
-        categoryCell.textContent = cat;
-        categoryCell.dataset.category = catIndex;
-        grid.appendChild(categoryCell);
+        const label = document.createElement('div');
+        label.className = 'category-label';
+        label.textContent = cat;
+        catQuestion.appendChild(label);
 
-        // Pregunta (fila 2 de cada par, columna 1)
-        const questionCell = document.createElement('div');
-        questionCell.className = 'question-cell';
-        questionCell.id = `question-${catIndex}`;
-        questionCell.style.gridRow = rowStart + 1;
-        questionCell.dataset.category = catIndex;
-        grid.appendChild(questionCell);
+        const question = document.createElement('div');
+        question.className = 'question-text';
+        question.id = `question-${catIndex}`;
+        catQuestion.appendChild(question);
 
-        // 3 opciones (columnas 2,3,4 de fila 2)
+        grid.appendChild(catQuestion);
+
+        // Columnas 2,3,4: Opciones
         for(let i = 0; i < 3; i++) {
           const option = document.createElement('div');
           option.className = 'option';
           option.dataset.category = catIndex;
           option.dataset.option = i;
-          option.style.gridRow = rowStart + 1;
-          option.style.gridColumn = i + 2;
           grid.appendChild(option);
         }
       });
@@ -260,8 +260,11 @@ Put your HTML text <!DOCTYPE html>
       gameState.currentRound = {};
       categories.forEach((catName, catIndex) => {
         if (!gameState.correctAnswers.has(catIndex)) {
-          const questions = trivialQuestions[catName.toLowerCase().replace(/ y /g, ' ').replace(/ /g, '')];
-          gameState.currentRound[catIndex] = questions[Math.floor(Math.random() * questions.length)];
+          const catKey = catName.toLowerCase().replace(/ y /g, '').replace(/ /g, '').replace(/á/g,'a').replace(/é/g,'e');
+          const questions = trivialQuestions[catKey] || trivialQuestions[catName.toLowerCase()];
+          if (questions) {
+            gameState.currentRound[catIndex] = questions[Math.floor(Math.random() * questions.length)];
+          }
         }
       });
     }
@@ -273,15 +276,17 @@ Put your HTML text <!DOCTYPE html>
       const options = document.querySelectorAll(`.option[data-category="${catIndex}"]`);
       const questionData = gameState.currentRound[catIndex];
 
-      questionCell.textContent = questionData.q;
-      questionCell.classList.add('active');
-      
-      options.forEach((opt, i) => {
-        opt.textContent = questionData.options[i];
-        opt.classList.remove('correct', 'incorrect', 'locked');
-      });
-      
-      currentActiveCategory = catIndex;
+      if (questionData) {
+        questionCell.textContent = questionData.q;
+        questionCell.classList.add('active');
+        
+        options.forEach((opt, i) => {
+          opt.textContent = questionData.options[i];
+          opt.classList.remove('correct', 'incorrect', 'locked');
+        });
+        
+        currentActiveCategory = catIndex;
+      }
     }
 
     function activateNextCategory() {
@@ -307,8 +312,9 @@ Put your HTML text <!DOCTYPE html>
       if (gameState.correctAnswers.has(catIndex)) return;
 
       const questionData = gameState.currentRound[catIndex];
-      const correctIndex = questionData.correct;
+      if (!questionData) return;
 
+      const correctIndex = questionData.correct;
       gameState.attempts++;
       updateStats();
 
@@ -320,7 +326,6 @@ Put your HTML text <!DOCTYPE html>
         options[correctIndex].classList.add('correct');
         gameState.correctAnswers.add(catIndex);
         
-        // Ocultar pregunta
         questionCell.classList.remove('active');
         
         setTimeout(() => {
