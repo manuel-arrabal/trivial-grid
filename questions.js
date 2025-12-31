@@ -1,5 +1,5 @@
 const trivialQuestions = {
-  'Geografía': [
+  'GEOGRAFÍA': [
     { q: '¿Cuál es la capital de España?', options: ['Barcelona', 'Madrid', 'Valencia'], correct: 1 },
     { q: '¿Qué río pasa por Zaragoza?', options: ['Tajo', 'Ebro', 'Guadalquivir'], correct: 1 },
     { q: '¿Cuántas comunidades autónomas tiene España?', options: ['15', '17', '19'], correct: 1 },
@@ -18,7 +18,7 @@ const trivialQuestions = {
     // ...añadir hasta 100 preguntas siguiendo el mismo formato
   ],
 
-  'Entretenimiento': [
+  'ENTRETENIMIENTO': [
     { q: '¿Quién dirigió la película "El Laberinto del Fauno"?', options: ['Pedro Almodóvar', 'Guillermo del Toro', 'Alejandro Amenábar'], correct: 1 },
     { q: '¿Qué cantante popularizó la canción "Mediterráneo"?', options: ['Joan Manuel Serrat', 'Joaquín Sabina', 'Luis Eduardo Aute'], correct: 0 },
     { q: '¿En qué ciudad se celebra el Festival de Cine de San Sebastián?', options: ['Bilbao', 'San Sebastián', 'Vitoria'], correct: 1 },
@@ -37,7 +37,7 @@ const trivialQuestions = {
     // ...añadir hasta 100
   ],
 
-  'Historia': [
+  'HISTORIA': [
     { q: '¿En qué año se descubrió América?', options: ['1492', '1512', '1488'], correct: 0 },
     { q: '¿Quién fue el primer presidente del Gobierno de la democracia española?', options: ['Adolfo Suárez', 'Felipe González', 'Leopoldo Calvo-Sotelo'], correct: 0 },
     { q: '¿Cuándo terminó la Guerra Civil Española?', options: ['1939', '1936', '1945'], correct: 0 },
@@ -56,7 +56,7 @@ const trivialQuestions = {
     // ...añadir hasta 100
   ],
 
-  'Arte y Literatura': [
+  'ARTE Y LITERATURA': [
     { q: '¿Quién escribió "Don Quijote de la Mancha"?', options: ['Miguel de Cervantes', 'Lope de Vega', 'Calderón de la Barca'], correct: 0 },
     { q: '¿Qué pintor español es famoso por "Las Meninas"?', options: ['Velázquez', 'Goya', 'El Greco'], correct: 0 },
     { q: '¿Dónde se encuentra el Museo del Prado?', options: ['Madrid', 'Barcelona', 'Sevilla'], correct: 0 },
@@ -75,7 +75,7 @@ const trivialQuestions = {
     // ...añadir hasta 100
   ],
 
-  'Ciencias y Naturaleza': [
+  'CIENCIAS Y NATURALEZA': [
     { q: '¿Cuál es el planeta más grande del sistema solar?', options: ['Júpiter', 'Saturno', 'Neptuno'], correct: 0 },
     { q: '¿Cuántos huesos tiene el cuerpo humano adulto aproximadamente?', options: ['206', '180', '230'], correct: 0 },
     { q: '¿Qué gas necesitan las plantas para la fotosíntesis?', options: ['Dióxido de carbono', 'Oxígeno', 'Nitrógeno'], correct: 0 },
@@ -94,7 +94,7 @@ const trivialQuestions = {
     // ...añadir hasta 100
   ],
 
-  'Deportes y Pasatiempos': [
+  'DEPORTE Y PASATIEMPOS': [
     { q: '¿En qué año ganó España su primer Mundial de fútbol?', options: ['2010', '2006', '2014'], correct: 0 },
     { q: '¿Quién es el tenista español con más Grand Slams?', options: ['Rafael Nadal', 'Carlos Alcaraz', 'David Ferrer'], correct: 0 },
     { q: '¿Cuántos jugadores hay en pista por equipo en baloncesto?', options: ['5', '6', '4'], correct: 0 },
