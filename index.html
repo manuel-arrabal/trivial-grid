@@ -12,34 +12,30 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px;
-      color: #111827;
+      padding: 20px;
+      color: #1e293b;
     }
 
     .container {
-      max-width: 720px;
+      max-width: 500px;
       width: 100%;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
 
     h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -47,153 +43,139 @@
     }
 
     .subtitle {
-      color: #6b7280;
-      font-size: 1rem;
+      color: #64748b;
+      font-size: 0.95rem;
       font-weight: 500;
     }
 
     .game-card {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(20px);
       border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 32px 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .stats {
       display: flex;
-      justify-content: flex-end;
-      gap: 32px;
-      margin-bottom: 24px;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .stat {
-      text-align: right;
+      text-align: center;
     }
 
     .stat-label {
       font-size: 0.75rem;
+      color: #94a3b8;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9ca3af;
+      letter-spacing: 0.05em;
       font-weight: 600;
       margin-bottom: 4px;
     }
 
     .stat-value {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #111827;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 120px 1fr 1fr 1fr;
-      grid-auto-rows: 80px;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .category-label {
-      font-size: 0.75rem;
-      color: #6b7280;
+      font-size: 0.7rem;
+      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      display: flex;
-      align-items: flex-start;
-      padding-top: 12px;
       font-weight: 700;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
+      padding: 4px 8px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      align-self: flex-start;
+      width: fit-content;
     }
 
-    .question-cell {
-      grid-column: 2 / span 3;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      border-radius: 16px;
-      padding: 16px;
-      font-size: 0.9rem;
-      line-height: 1.4;
+    .question-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .option {
+      height: 68px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
       display: flex;
       align-items: center;
-      border: 2px solid transparent;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-weight: 500;
+      background: #ffffff;
+      line-height: 1.3;
       position: relative;
       overflow: hidden;
     }
 
-    .question-cell::before {
+    .option::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      inset: 0;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
       opacity: 0;
       transition: opacity 0.2s ease;
     }
 
-    .question-cell:hover::before {
+    .option:hover:not(.correct):not(.incorrect):not(.locked)::before {
       opacity: 1;
     }
 
-    .question-cell.option-0:hover {
-      border-color: #10b981;
-    }
-
-    .cell {
-      border-radius: 16px;
-      border: 2px solid #e2e8f0;
-      background: #ffffff;
-      font-size: 0.85rem;
-      padding: 12px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      line-height: 1.3;
-    }
-
-    .cell:hover:not(.correct):not(.incorrect):not(.locked) {
+    .option:hover:not(.correct):not(.incorrect):not(.locked) {
       border-color: #6366f1;
-      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
     }
 
-    .cell.correct,
-    .question-cell.correct {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white !important;
+    .option.correct {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
       border-color: #10b981;
       cursor: default;
-      transform: scale(1.02);
     }
 
-    .cell.incorrect,
-    .question-cell.incorrect {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: white !important;
+    .option.incorrect {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
       border-color: #ef4444;
     }
 
-    .cell.locked,
-    .question-cell.locked {
+    .option.locked {
       cursor: default;
+      opacity: 0.7;
     }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
     }
 
     .shake {
@@ -202,55 +184,47 @@
 
     .reset-btn {
       width: 100%;
-      padding: 16px;
-      border: 2px solid transparent;
+      height: 52px;
+      border: none;
       border-radius: 16px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
       font-size: 1rem;
       font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .reset-btn:hover {
-      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
       transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
     }
 
-    footer {
-      width: 100%;
-      max-width: 720px;
+    .footer {
       text-align: center;
-      color: #9ca3af;
-      padding: 20px;
+      margin-top: 24px;
+      color: #64748b;
       font-size: 0.8rem;
-      margin-top: 20px;
     }
 
-    @media (max-width: 768px) {
-      .grid {
-        grid-template-columns: 100px 1fr 1fr 1fr;
-        grid-auto-rows: 70px;
-        gap: 8px;
-      }
-      
-      .category-label {
-        font-size: 0.7rem;
-        padding-top: 8px;
-      }
-      
-      .question-cell,
-      .cell {
-        font-size: 0.8rem;
-        padding: 12px 8px;
+    @media (max-width: 480px) {
+      .container {
+        padding: 12px;
       }
       
       .game-card {
-        padding: 24px;
+        padding: 24px 20px;
+      }
+      
+      .option {
+        height: 60px;
+        font-size: 0.8rem;
+      }
+      
+      h1 {
+        font-size: 1.75rem;
       }
     }
   </style>
@@ -275,42 +249,47 @@
       </div>
 
       <div class="grid" id="grid"></div>
+      
       <button class="reset-btn" onclick="resetGame()">Nueva Partida</button>
+    </div>
+
+    <div class="footer">
+      <p>Versión Beta · © 2025 Trivial Grid</p>
     </div>
   </div>
 
-  <footer>
-    <p><strong>Versión Beta</strong> · No se recopilan datos personales</p>
-    <p>© 2025 Trivial Grid · Licencia MIT</p>
-  </footer>
-
   <script>
-    // Base de datos de preguntas (3 opciones por pregunta)
     const trivialQuestions = {
       'Geografía': [
-        { q: '¿Cuál es la capital de España?', options: ['Barcelona', 'Madrid', 'Valencia'], correct: 1 },
-        { q: '¿Qué río pasa por Zaragoza?', options: ['Tajo', 'Ebro', 'Guadalquivir'], correct: 1 },
-        { q: '¿Cuántas comunidades autónomas?', options: ['15', '17', '19'], correct: 1 }
+        { q: '¿Capital de España?', options: ['Barcelona', 'Madrid', 'Valencia'], correct: 1 },
+        { q: '¿Río de Zaragoza?', options: ['Tajo', 'Ebro', 'Guadalquivir'], correct: 1 },
+        { q: '¿Comunidades autónomas?', options: ['15', '17', '19'], correct: 1 },
+        { q: '¿Alhambra está en?', options: ['Córdoba', 'Granada', 'Sevilla'], correct: 1 }
       ],
       'Entretenimiento': [
-        { q: '¿Quién dirigió "El Laberinto del Fauno"?', options: ['Almodóvar', 'Del Toro', 'Amenábar'], correct: 1 },
-        { q: '¿Quién cantó "Mediterráneo"?', options: ['Sabina', 'Serrat', 'Aute'], correct: 1 }
+        { q: '"El Laberinto del Fauno"?', options: ['Almodóvar', 'Del Toro', 'Amenábar'], correct: 1 },
+        { q: '"Mediterráneo" cantó?', options: ['Sabina', 'Serrat', 'Iglesias'], correct: 1 },
+        { q: 'Festival de Cine?', options: ['Bilbao', 'San Sebastián', 'Pamplona'], correct: 1 }
       ],
       'Historia': [
-        { q: '¿Año del descubrimiento de América?', options: ['1492', '1512', '1488'], correct: 0 },
-        { q: '¿Fin de la Guerra Civil Española?', options: ['1939', '1936', '1945'], correct: 0 }
+        { q: '¿Descubrimiento América?', options: ['1492', '1512', '1488'], correct: 0 },
+        { q: '¿Fin Guerra Civil?', options: ['1939', '1945', '1936'], correct: 0 },
+        { q: '¿Reyes Católicos?', options: ['Carlos I', 'Fernando e Isabel', 'Felipe II'], correct: 1 }
       ],
       'Arte y Literatura': [
-        { q: '¿Autor de "Don Quijote"?', options: ['Cervantes', 'Lope de Vega', 'Velázquez'], correct: 0 },
-        { q: '¿Pintor de "Las Meninas"?', options: ['Goya', 'Velázquez', 'El Greco'], correct: 1 }
+        { q: '"Don Quijote" escribió?', options: ['Lope de Vega', 'Cervantes', 'Góngora'], correct: 1 },
+        { q: '"Las Meninas" pintó?', options: ['Goya', 'Velázquez', 'El Greco'], correct: 1 },
+        { q: '"Guernica" es de?', options: ['Dalí', 'Picasso', 'Miró'], correct: 1 }
       ],
-      'Ciencias y Naturaleza': [
-        { q: '¿Planeta más grande?', options: ['Júpiter', 'Saturno', 'Neptuno'], correct: 0 },
-        { q: '¿Huesos en cuerpo humano adulto?', options: ['206', '180', '230'], correct: 0 }
+      'Ciencias': [
+        { q: '¿Planeta más grande?', options: ['Saturno', 'Júpiter', 'Urano'], correct: 1 },
+        { q: '¿Huesos humanos?', options: ['206', '180', '250'], correct: 0 },
+        { q: '¿Gas fotosíntesis?', options: ['Oxígeno', 'CO₂', 'Nitrógeno'], correct: 1 }
       ],
-      'Deportes y Pasatiempos': [
-        { q: '¿Año del Mundial de España?', options: ['2010', '2006', '2014'], correct: 0 },
-        { q: '¿Tenista con más Grand Slams?', options: ['Nadal', 'Alcaraz', 'Ferrer'], correct: 0 }
+      'Deportes': [
+        { q: '¿Mundial España?', options: ['2006', '2010', '2014'], correct: 1 },
+        { q: '¿Más Grand Slams?', options: ['Alcaraz', 'Nadal', 'Ferrero'], correct: 1 },
+        { q: '¿Juegos 1992?', options: ['Madrid', 'Barcelona', 'Sevilla'], correct: 1 }
       ]
     };
 
@@ -326,33 +305,32 @@
       grid.innerHTML = '';
 
       categories.forEach((cat, catIndex) => {
-        // Columna 1: Nombre categoría (vertical)
+        const row = document.createElement('div');
+        row.className = 'row';
+
         const label = document.createElement('div');
         label.className = 'category-label';
         label.textContent = cat;
-        grid.appendChild(label);
+        row.appendChild(label);
 
-        // Columna 2: Pregunta + Opción 0 (clickeable)
-        const qCell = document.createElement('div');
-        qCell.className = 'question-cell option-0';
-        qCell.dataset.category = catIndex;
-        qCell.dataset.option = 0;
-        qCell.id = `question-${catIndex}`;
-        grid.appendChild(qCell);
+        const questionRow = document.createElement('div');
+        questionRow.className = 'question-row';
+        questionRow.dataset.category = catIndex;
 
-        // Columnas 3 y 4: Opciones 1 y 2
-        for (let i = 1; i < 3; i++) {
-          const cell = document.createElement('div');
-          cell.className = 'cell';
-          cell.dataset.category = catIndex;
-          cell.dataset.option = i;
-          grid.appendChild(cell);
+        for (let i = 0; i < 3; i++) {
+          const option = document.createElement('div');
+          option.className = 'option';
+          option.dataset.option = i;
+          questionRow.appendChild(option);
         }
+
+        row.appendChild(questionRow);
+        grid.appendChild(row);
       });
 
       startNewRound();
       renderGrid();
-      attachEventListeners();
+      attachListeners();
       updateStats();
     }
 
@@ -361,40 +339,38 @@
       categories.forEach((cat, catIndex) => {
         if (!gameState.correctAnswers.has(catIndex)) {
           const questions = trivialQuestions[cat];
-          const randomQ = questions[Math.floor(Math.random() * questions.length)];
-          gameState.currentRound[catIndex] = randomQ;
+          gameState.currentRound[catIndex] = questions[Math.floor(Math.random() * questions.length)];
         }
       });
     }
 
     function renderGrid() {
       categories.forEach((cat, catIndex) => {
+        const questionRow = document.querySelector(`[data-category="${catIndex}"]`);
+        const options = questionRow.querySelectorAll('.option');
         const questionData = gameState.currentRound[catIndex];
-        const qCell = document.getElementById(`question-${catIndex}`);
-        const cells = document.querySelectorAll(`[data-category="${catIndex}"].cell`);
 
         if (gameState.correctAnswers.has(catIndex)) {
-          qCell.className = 'question-cell correct locked';
-          qCell.textContent = '✅ Completada';
-          cells.forEach(cell => {
-            cell.className = 'cell correct locked';
-            cell.textContent = '✓';
+          options.forEach((opt, i) => {
+            opt.className = 'option correct locked';
+            opt.textContent = '✓';
           });
           return;
         }
 
-        // Pregunta activa
-        qCell.className = 'question-cell option-0';
-        qCell.textContent = questionData.options[0];
-        cells[0].textContent = questionData.options[1];
-        cells[1].textContent = questionData.options[2];
+        options.forEach((opt, i) => {
+          opt.className = 'option';
+          opt.textContent = questionData.options[i];
+          opt.dataset.option = i;
+        });
       });
     }
 
-    function attachEventListeners() {
-      document.querySelectorAll('[data-category]').forEach(cell => {
-        cell.onclick = function() {
-          const catIndex = parseInt(this.dataset.category);
+    function attachListeners() {
+      document.querySelectorAll('.option').forEach(option => {
+        option.onclick = function() {
+          const questionRow = this.closest('[data-category]');
+          const catIndex = parseInt(questionRow.dataset.category);
           const optIndex = parseInt(this.dataset.option);
           handleAnswer(catIndex, optIndex, this);
         };
@@ -410,49 +386,35 @@
       gameState.attempts++;
       updateStats();
 
-      const qCell = document.getElementById(`question-${catIndex}`);
-      const allCells = document.querySelectorAll(`[data-category="${catIndex}"]`);
+      const questionRow = clickedElement.closest('[data-category]');
+      const options = questionRow.querySelectorAll('.option');
 
       if (optionIndex === correctIndex) {
-        // ¡Correcto!
         gameState.correctAnswers.add(catIndex);
-        
-        allCells.forEach(cell => {
-          cell.classList.add('correct', 'locked');
+        options.forEach(opt => {
+          opt.classList.add('correct', 'locked');
+          opt.textContent = '✓';
         });
-        
-        qCell.textContent = '✅ ¡Correcto!';
-        
+
         if (gameState.correctAnswers.size === categories.length) {
-          setTimeout(() => {
-            alert(`🎉 ¡TRIVIAL COMPLETADO!\n\nIntentos totales: ${gameState.attempts}\n\n¡Enhorabuena!`);
-          }, 500);
+          setTimeout(() => alert(`🎉 ¡COMPLETADO!\n${gameState.attempts} intentos`), 400);
         }
       } else {
-        // Incorrecto
         clickedElement.classList.add('incorrect', 'shake');
-        setTimeout(() => {
-          clickedElement.classList.remove('shake');
-        }, 300);
+        setTimeout(() => clickedElement.classList.remove('shake'), 300);
       }
     }
 
     function updateStats() {
       document.getElementById('attempts').textContent = gameState.attempts;
-      document.getElementById('progress').textContent = 
-        `${gameState.correctAnswers.size}/${categories.length}`;
+      document.getElementById('progress').textContent = `${gameState.correctAnswers.size}/6`;
     }
 
     function resetGame() {
-      gameState = {
-        attempts: 0,
-        correctAnswers: new Set(),
-        currentRound: {}
-      };
+      gameState = { attempts: 0, correctAnswers: new Set(), currentRound: {} };
       initGrid();
     }
 
-    // Inicializar
     initGrid();
   </script>
 </body>
