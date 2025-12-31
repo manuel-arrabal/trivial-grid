@@ -3,45 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trivial Minimalista</title>
+<title>Trivial Compacto</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: #f8f8f8;
+    background: #f4f4f4;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    padding: 2rem 0;
   }
 
   .card {
     background: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    max-width: 400px;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    max-width: 450px;
     width: 90%;
-    text-align: center;
   }
 
   .question {
     font-weight: bold;
-    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
   }
 
   .options {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.5rem;
   }
 
   .option {
-    padding: 0.8rem;
+    padding: 0.5rem;
     border: 2px solid #ccc;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 0.9rem;
     user-select: none;
   }
 
@@ -56,15 +55,16 @@
   }
 
   .retry-btn {
-    margin-top: 1.5rem;
-    padding: 0.8rem 1.2rem;
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     background-color: #1976d2;
     color: white;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    display: none;
+    width: 100%;
   }
 
   .retry-btn:hover {
@@ -75,73 +75,70 @@
 <body>
 
 <div class="card">
-  <div class="question" id="question">Pregunta aparecerá aquí</div>
+  <div class="question" id="question"></div>
   <div class="options">
-    <div class="option" onclick="checkAnswer(this,0)">Opción 1</div>
-    <div class="option" onclick="checkAnswer(this,1)">Opción 2</div>
-    <div class="option" onclick="checkAnswer(this,2)">Opción 3</div>
+    <div class="option" onclick="checkAnswer(this,0)"></div>
+    <div class="option" onclick="checkAnswer(this,1)"></div>
+    <div class="option" onclick="checkAnswer(this,2)"></div>
   </div>
-  <button class="retry-btn" onclick="startQuiz()">Volver a intentarlo</button>
+  <button class="retry-btn" id="retryBtn" onclick="startQuiz()">Volver a intentarlo</button>
 </div>
 
 <script>
+// Aquí irían tus preguntas completas, ejemplo reducido:
 const questions = [
-  {
-    q: "¿De qué país es originario el queso brie?",
-    options: ["Italia", "Francia", "Suiza"],
-    correct: 1
-  },
-  {
-    q: "¿Cuál es la moneda de México?",
-    options: ["Peso mexicano", "Dólar", "Euro"],
-    correct: 0
-  },
-  {
-    q: "¿De qué colores es la bandera de Japón?",
-    options: ["Blanca y roja", "Azul y blanca", "Roja y negra"],
-    correct: 0
-  }
+  {q:"¿De qué país es originario el queso brie?", options:["Italia","Francia","Suiza"], correct:1},
+  {q:"¿Cuál es la moneda de México?", options:["Peso mexicano","Dólar","Euro"], correct:0},
+  {q:"¿De qué colores es la bandera de Japón?", options:["Blanca y roja","Azul y blanca","Roja y negra"], correct:0},
+  // ... todas tus demás preguntas
 ];
 
 let currentQuestion = 0;
+let score = 0;
 
 function startQuiz() {
   currentQuestion = 0;
+  score = 0;
+  document.getElementById('retryBtn').style.display = 'none';
   showQuestion();
 }
 
 function showQuestion() {
+  if(currentQuestion >= questions.length){
+    document.getElementById('question').textContent = `Juego terminado. Puntuación: ${score}/${questions.length}`;
+    document.querySelectorAll('.option').forEach(o => o.style.display='none');
+    if(score < questions.length) document.getElementById('retryBtn').style.display='block';
+    return;
+  }
+
   const q = questions[currentQuestion];
   document.getElementById('question').textContent = q.q;
   const optionElements = document.querySelectorAll('.option');
-  optionElements.forEach((el, i) => {
+  optionElements.forEach((el,i)=>{
     el.textContent = q.options[i];
-    el.classList.remove('correct', 'incorrect');
+    el.classList.remove('correct','incorrect');
     el.style.pointerEvents = "auto";
+    el.style.display = "block";
   });
 }
 
-function checkAnswer(el, idx) {
+function checkAnswer(el, idx){
   const q = questions[currentQuestion];
   const optionElements = document.querySelectorAll('.option');
   optionElements.forEach(o => o.style.pointerEvents = "none");
 
   if(idx === q.correct){
     el.classList.add('correct');
+    score++;
   } else {
     el.classList.add('incorrect');
     optionElements[q.correct].classList.add('correct');
   }
 
-  setTimeout(() => {
+  setTimeout(()=>{
     currentQuestion++;
-    if(currentQuestion < questions.length){
-      showQuestion();
-    } else {
-      document.getElementById('question').textContent = "¡Has terminado el trivial!";
-      optionElements.forEach(o => o.style.display = 'none');
-    }
-  }, 1000);
+    showQuestion();
+  }, 500);
 }
 
 startQuiz();
