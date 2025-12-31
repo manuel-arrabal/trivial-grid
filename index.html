@@ -39,7 +39,7 @@
       background: rgba(255,255,255,0.95);
       backdrop-filter: blur(20px);
       border-radius: 24px;
-      padding: 32px 24px;
+      padding: 32px 34px;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.2);
     }
@@ -69,8 +69,8 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      grid-auto-rows: 80px;
+      grid-template-columns: 180px 90px 90px 90px;
+      grid-auto-rows: 90px;
       gap: 12px;
       margin-bottom: 28px;
     }
@@ -83,26 +83,18 @@
     }
 
     .category-label {
-      background: rgba(99,102,241,0.15);
-      border: 2px solid rgba(99,102,241,0.3);
-      border-radius: 8px;
-      padding: 6px 8px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #1e293b;
-      text-align: center;
+      color: #6b7280;
+      text-align: left;
     }
 
     .question-text {
-      background: rgba(248,250,252,0.8);
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 8px;
       font-size: 0.8rem;
       font-weight: 500;
-      text-align: center;
+      text-align: left;
       line-height: 1.3;
       opacity: 0;
       visibility: hidden;
@@ -117,18 +109,21 @@
 
     .option {
       border: 2px solid #e2e8f0;
-      border-radius: 12px;
+      border-radius: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-align: center;
-      padding: 8px;
+      padding: 6px;
       cursor: pointer;
       transition: all 0.2s ease;
       background: #ffffff;
-      line-height: 1.3;
+      line-height: 1.2;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
     }
 
     .option:hover:not(.correct):not(.incorrect):not(.locked) {
@@ -140,13 +135,11 @@
 
     .correct { 
       border-color: #10b981 !important; 
-      background: rgba(16,185,129,0.1) !important;
       box-shadow: 0 0 0 3px rgba(16,185,129,0.3) !important;
     }
 
     .incorrect { 
       border-color: #ef4444 !important; 
-      background: rgba(239,68,68,0.1) !important;
       box-shadow: 0 0 0 3px rgba(239,68,68,0.3) !important;
     }
 
@@ -189,14 +182,13 @@
   <div class="container">
     <header>
       <h1>Trivial Grid</h1>
-      <div class="subtitle">Cultura general española</div>
     </header>
 
     <div class="game-card">
       <div class="stats">
         <div class="stat">
           <div class="stat-label">Intentos</div>
-          <div class="stat-value" id="attempts">0</div>
+          <div class="stat-value" id="attempts">1</div>
         </div>
         <div class="stat">
           <div class="stat-label">Progreso</div>
@@ -205,7 +197,7 @@
       </div>
 
       <div class="grid" id="grid"></div>
-      <button class="reset-btn" onclick="resetGame()">Nueva Partida</button>
+      <button class="reset-btn" onclick="resetGame(event)">Nueva Partida</button>
     </div>
 
     <div class="footer">Versión Beta · © 2025 Trivial Grid</div>
@@ -214,8 +206,36 @@
   <script src="questions.js"></script>
   <script>
     const categories = ['GEOGRAFÍA', 'ENTRETENIMIENTO', 'HISTORIA', 'ARTE Y LITERATURA', 'CIENCIAS Y NATURALEZA', 'DEPORTE Y PASATIEMPOS'];
-    let gameState = { attempts: 0, correctAnswers: new Set(), currentRound: {} };
+    let gameState = { attempts: 1, correctAnswers: new Set(), currentRound: {}, suspendCounting: false };
     let currentActiveCategory = 0;
+    let normalizedQuestions = {};
+    let appInitialized = false;
+
+    function normalizeKey(name) {
+      return name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '')
+        .replace(/y/g, '')
+        .replace(/[^a-z0-9]/g, '');
+    }
+
+    function buildQuestionIndex() {
+      if (typeof trivialQuestions === 'undefined') return;
+      normalizedQuestions = {};
+      Object.keys(trivialQuestions).forEach(k => {
+        try {
+          const val = trivialQuestions[k];
+          const norm = normalizeKey(k);
+          normalizedQuestions[k] = val;
+          normalizedQuestions[k.toLowerCase()] = val;
+          normalizedQuestions[norm] = val;
+        } catch (e) {
+          console.error('Error indexing questions key', k, e);
+        }
+      });
+    }
 
     function initGrid() {
       const grid = document.getElementById('grid');
@@ -256,18 +276,18 @@
       updateStats();
     }
 
-    function startNewRound() {
-      gameState.currentRound = {};
-      categories.forEach((catName, catIndex) => {
-        if (!gameState.correctAnswers.has(catIndex)) {
-          const catKey = catName.toLowerCase().replace(/ y /g, '').replace(/ /g, '').replace(/á/g,'a').replace(/é/g,'e');
-          const questions = trivialQuestions[catKey] || trivialQuestions[catName.toLowerCase()];
-          if (questions) {
-            gameState.currentRound[catIndex] = questions[Math.floor(Math.random() * questions.length)];
+      function startNewRound() {
+        gameState.currentRound = {};
+        categories.forEach((catName, catIndex) => {
+          if (!gameState.correctAnswers.has(catIndex)) {
+            const norm = normalizeKey(catName);
+            const questions = normalizedQuestions[catName] || normalizedQuestions[catName.toLowerCase()] || normalizedQuestions[norm] || trivialQuestions[catName];
+            if (questions) {
+              gameState.currentRound[catIndex] = questions[Math.floor(Math.random() * questions.length)];
+            }
           }
-        }
-      });
-    }
+        });
+      }
 
     function activateCategory(catIndex) {
       if (gameState.correctAnswers.has(catIndex)) return;
@@ -300,23 +320,22 @@
 
     function attachListeners() {
       document.querySelectorAll('.option').forEach(option => {
-        option.onclick = function() {
+        option.onclick = function(e) {
           const catIndex = parseInt(this.dataset.category);
           const optIndex = parseInt(this.dataset.option);
-          handleAnswer(catIndex, optIndex, this);
+          handleAnswer(catIndex, optIndex, this, e);
         };
       });
     }
 
-    function handleAnswer(catIndex, optIndex, clickedOption) {
+    function handleAnswer(catIndex, optIndex, clickedOption, event) {
       if (gameState.correctAnswers.has(catIndex)) return;
 
       const questionData = gameState.currentRound[catIndex];
       if (!questionData) return;
 
       const correctIndex = questionData.correct;
-      gameState.attempts++;
-      updateStats();
+      // `attempts` counts game starts only — do not change here when answering.
 
       const questionCell = document.getElementById(`question-${catIndex}`);
       const options = document.querySelectorAll(`.option[data-category="${catIndex}"]`);
@@ -325,9 +344,8 @@
         // Correcta
         options[correctIndex].classList.add('correct');
         gameState.correctAnswers.add(catIndex);
-        
-        questionCell.classList.remove('active');
-        
+        updateStats();
+
         setTimeout(() => {
           if (gameState.correctAnswers.size === categories.length) {
             setTimeout(() => alert(`🎉 ¡TRIVIAL COMPLETADO!\n${gameState.attempts} intentos`), 400);
@@ -337,9 +355,14 @@
         }, 600);
       } else {
         // Errónea
+        updateStats();
         clickedOption.classList.add('incorrect', 'shake');
         options[correctIndex].classList.add('correct');
         setTimeout(() => clickedOption.classList.remove('shake'), 300);
+        // Lock all options on wrong answer
+        document.querySelectorAll('.option').forEach(opt => opt.classList.add('locked'));
+        // Show next question but don't allow answering
+        setTimeout(() => activateNextCategory(), 600);
       }
     }
 
@@ -348,15 +371,23 @@
       document.getElementById('progress').textContent = `${gameState.correctAnswers.size}/6`;
     }
 
-    function resetGame() {
-      gameState = { attempts: 0, correctAnswers: new Set(), currentRound: {} };
+    function resetGame(event) {
+      // `attempts` counts how many games were started.
+      // If this reset was triggered by a real user click, increment attempts;
+      // if it's an automatic initialization (no event) reset to 1.
+      const newAttempts = (event && event.isTrusted) ? (gameState.attempts + 1) : 1;
+      gameState = { attempts: newAttempts, correctAnswers: new Set(), currentRound: {}, suspendCounting: false };
       currentActiveCategory = 0;
       initGrid();
+      updateStats();
     }
 
     function initWhenReady() {
+      if (appInitialized) return;
       if (typeof trivialQuestions !== 'undefined') {
+        buildQuestionIndex();
         initGrid();
+        appInitialized = true;
       } else {
         setTimeout(initWhenReady, 50);
       }
