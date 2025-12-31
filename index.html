@@ -1,573 +1,278 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trivial Grid</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trivial Grid</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        .container {
-            max-width: 600px;
-            width: 100%;
-            flex: 1;
-        }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    color: #333;
+}
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+.container {
+    max-width: 700px;
+    width: 100%;
+}
 
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #000;
-            margin-bottom: 30px;
-        }
+h1 {
+    text-align: center;
+    font-size: 2.4rem;
+    margin-bottom: 25px;
+    color: #000;
+}
 
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 25px;
-        }
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+}
 
-        .stat {
-            text-align: center;
-        }
+.stat {
+    text-align: center;
+}
 
-        .stat-label {
-            font-size: 0.75rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
+.stat-label {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+}
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #000;
-        }
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
 
-        .game-card {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
+.game-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
-        .grid {
-            display: grid;
-            grid-template-columns: auto repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 25px;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: auto repeat(3, 1fr);
+    gap: 10px;
+}
 
-        .category-label {
-            display: flex;
-            align-items: center;
-            font-size: 0.75rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding-right: 12px;
-            font-weight: 600;
-        }
+.category-label {
+    grid-column: span 4;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #666;
+    margin-top: 20px;
+}
 
-        .cell {
-            aspect-ratio: 1;
-            border: 2px solid #e5e5e5;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: white;
-        }
+.question-inline {
+    grid-column: span 4;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #000;
+    margin: 10px 0 15px;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
 
-        .cell:hover:not(.correct):not(.incorrect) {
-            border-color: #999;
-            background: #fafafa;
-        }
+.question-inline.exit {
+    opacity: 0;
+    transform: translateY(-10px);
+}
 
-        .cell.correct {
-            background: #000;
-            color: white;
-            border-color: #000;
-            cursor: default;
-        }
+.question-inline.enter {
+    opacity: 0;
+    transform: translateY(10px);
+}
 
-        .cell.incorrect {
-            background: #ff4444;
-            color: white;
-            border-color: #ff4444;
-        }
+.cell {
+    aspect-ratio: 1;
+    border: 2px solid #e5e5e5;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.25s ease;
+    background: white;
+}
 
-        .cell.incorrect:not(.locked) {
-            cursor: pointer;
-        }
+.cell:hover {
+    border-color: #000;
+}
 
-        .cell.locked {
-            cursor: default;
-        }
+.cell.correct {
+    border-color: #2ecc71;
+}
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
+.cell.incorrect {
+    border-color: #e74c3c;
+}
 
-        .shake {
-            animation: shake 0.4s;
-        }
+.cell.locked {
+    pointer-events: none;
+    cursor: default;
+}
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        .question-category {
-            display: inline-block;
-            background: #000;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 20px;
-        }
-
-        .question {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            color: #000;
-            line-height: 1.5;
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .option {
-            padding: 16px 20px;
-            border: 2px solid #e5e5e5;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: white;
-            font-size: 1rem;
-            text-align: left;
-        }
-
-        .option:hover {
-            border-color: #000;
-            background: #fafafa;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px 24px;
-            border: 2px solid #000;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #000;
-            color: white;
-        }
-
-        .btn:hover {
-            background: #333;
-            border-color: #333;
-        }
-
-        .result-message {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .result-message.correct {
-            color: #000;
-        }
-
-        .result-message.incorrect {
-            color: #ff4444;
-        }
-
-        .victory-modal {
-            text-align: center;
-        }
-
-        .victory-title {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .victory-message {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #000;
-            margin-bottom: 15px;
-        }
-
-        .victory-stats {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
-
-        .victory-stats p {
-            font-size: 1rem;
-            margin: 8px 0;
-            color: #333;
-        }
-
-        footer {
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-            color: #666;
-            padding: 20px;
-            margin-top: 20px;
-            font-size: 0.85rem;
-        }
-
-        .footer-text {
-            margin: 8px 0;
-            opacity: 0.9;
-        }
-
-        .footer-text a {
-            color: #666;
-            text-decoration: underline;
-        }
-
-        .footer-text a:hover {
-            color: #000;
-        }
-
-        .copyright {
-            opacity: 0.7;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #e5e5e5;
-            background: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.2s;
-        }
-
-        .theme-toggle:hover {
-            border-color: #000;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .game-card {
-                padding: 20px;
-            }
-
-            .category-label {
-                font-size: 0.65rem;
-                padding-right: 8px;
-            }
-
-            .cell {
-                font-size: 1.2rem;
-            }
-
-            .grid {
-                gap: 6px;
-            }
-        }
-    </style>
+footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.85rem;
+    color: #666;
+}
+</style>
 </head>
+
 <body>
-    <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
 
-    <div class="container">
-        <header>
-            <h1>Trivial Grid</h1>
-            
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-label">Intentos</div>
-                    <div class="stat-value" id="attempts">0</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Progreso</div>
-                    <div class="stat-value" id="progress">0/6</div>
-                </div>
-            </div>
-        </header>
+<div class="container">
+    <h1>Trivial Grid</h1>
 
-        <div class="game-card">
-            <div class="grid" id="grid"></div>
-            <button class="btn" onclick="resetGame()">Nueva Partida</button>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-label">Intentos</div>
+            <div class="stat-value" id="attempts">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Progreso</div>
+            <div class="stat-value" id="progress">0/6</div>
         </div>
     </div>
 
-    <footer>
-        <p class="footer-text">
-            <strong>Versión Beta</strong> · No se recopilan ni utilizan datos personales
-        </p>
-        <p class="footer-text">
-            Preguntas de cultura general española
-        </p>
-        <p class="footer-text copyright">
-            © 2025 Trivial Grid · 
-            <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">
-                Licencia MIT
-            </a>
-        </p>
-    </footer>
-
-    <div class="modal" id="modal">
-        <div class="modal-content" id="modalContent"></div>
+    <div class="game-card">
+        <div class="grid" id="grid"></div>
     </div>
 
-    <script src="questions.js"></script>
-    <script>
-        const categories = [
-            'Geografía',
-            'Entretenimiento',
-            'Historia',
-            'Arte y Literatura',
-            'Ciencias y Naturaleza',
-            'Deportes y Pasatiempos'
-        ];
+    <footer>
+        <p>Versión Beta · © 2025 · Licencia MIT</p>
+    </footer>
+</div>
 
-        let gameState = {
-            attempts: 0,
-            correctAnswers: new Set(),
-            currentRound: {}
-        };
+<script src="questions.js"></script>
 
-        function initGrid() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
+<script>
+const categories = [
+    'Geografía',
+    'Entretenimiento',
+    'Historia',
+    'Arte y Literatura',
+    'Ciencias y Naturaleza',
+    'Deportes y Pasatiempos'
+];
 
-            categories.forEach((cat, catIndex) => {
-                const label = document.createElement('div');
-                label.className = 'category-label';
-                label.textContent = cat;
-                grid.appendChild(label);
+let gameState = {
+    attempts: 0,
+    correctAnswers: new Set(),
+    currentRound: {},
+    currentCategory: 0
+};
 
-                for (let i = 0; i < 3; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.category = catIndex;
-                    cell.dataset.option = i;
-                    cell.textContent = '';
-                    cell.onclick = () => showQuestion(catIndex, i);
-                    grid.appendChild(cell);
-                }
-            });
+function initGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
 
-            startNewRound();
+    categories.forEach((cat, index) => {
+        const label = document.createElement('div');
+        label.className = 'category-label';
+        label.textContent = cat;
+        grid.appendChild(label);
+
+        const question = document.createElement('div');
+        question.className = 'question-inline';
+        question.id = `question-${index}`;
+        grid.appendChild(question);
+
+        for (let i = 0; i < 3; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.category = index;
+            cell.onclick = () => checkAnswer(index, i);
+            grid.appendChild(cell);
         }
+    });
 
-        function startNewRound() {
-            gameState.currentRound = {};
-            
-            categories.forEach((cat, catIndex) => {
-                if (!gameState.correctAnswers.has(catIndex)) {
-                    const categoryQuestions = trivialQuestions[cat];
-                    const randomQuestion = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
-                    gameState.currentRound[catIndex] = randomQuestion;
-                }
-            });
-        }
+    startNewRound();
+    renderCurrentQuestion();
+}
 
-        function showQuestion(catIndex, optionIndex) {
-            if (gameState.correctAnswers.has(catIndex)) return;
+function startNewRound() {
+    gameState.currentRound = {};
+    categories.forEach((cat, i) => {
+        const qs = trivialQuestions[cat];
+        gameState.currentRound[i] =
+            qs[Math.floor(Math.random() * qs.length)];
+    });
+}
 
-            const category = categories[catIndex];
-            const questionData = gameState.currentRound[catIndex];
+function renderCurrentQuestion() {
+    const i = gameState.currentCategory;
+    if (i >= categories.length) return;
 
-            const modal = document.getElementById('modal');
-            const content = document.getElementById('modalContent');
+    const qEl = document.getElementById(`question-${i}`);
+    const qData = gameState.currentRound[i];
 
-            content.innerHTML = `
-                <div class="question-category">${category}</div>
-                <div class="question">${questionData.q}</div>
-                <div class="options">
-                    ${questionData.options.map((opt, i) => `
-                        <div class="option" onclick="checkAnswer(${catIndex}, ${optionIndex}, ${i}, ${questionData.correct})">${opt}</div>
-                    `).join('')}
-                </div>
-            `;
+    qEl.classList.add('enter');
+    qEl.textContent = qData.q;
 
-            modal.classList.add('active');
-        }
+    requestAnimationFrame(() => {
+        qEl.classList.remove('enter');
+    });
 
-        function checkAnswer(catIndex, optionIndex, selected, correct) {
-            gameState.attempts++;
-            updateStats();
+    const cells = document.querySelectorAll(`[data-category="${i}"]`);
+    cells.forEach((cell, idx) => {
+        cell.textContent = qData.options[idx];
+    });
+}
 
-            const cells = document.querySelectorAll(`[data-category="${catIndex}"]`);
-            const selectedCell = document.querySelector(`[data-category="${catIndex}"][data-option="${optionIndex}"]`);
+function checkAnswer(catIndex, selected) {
+    if (catIndex !== gameState.currentCategory) return;
 
-            if (selected === correct) {
-                gameState.correctAnswers.add(catIndex);
-                
-                cells.forEach(cell => {
-                    cell.classList.add('correct', 'locked');
-                    cell.textContent = '✓';
-                });
+    const qData = gameState.currentRound[catIndex];
+    const cells = document.querySelectorAll(`[data-category="${catIndex}"]`);
+    const qEl = document.getElementById(`question-${catIndex}`);
 
-                showResult(true);
-                
-                setTimeout(() => {
-                    document.getElementById('modal').classList.remove('active');
-                    
-                    if (gameState.correctAnswers.size === categories.length) {
-                        setTimeout(() => showVictory(), 500);
-                    }
-                }, 1500);
-            } else {
-                selectedCell.classList.add('incorrect', 'shake');
-                selectedCell.textContent = '✗';
-                
-                setTimeout(() => {
-                    selectedCell.classList.remove('shake');
-                }, 400);
+    gameState.attempts++;
+    updateStats();
 
-                showResult(false);
-                
-                setTimeout(() => {
-                    document.getElementById('modal').classList.remove('active');
-                }, 1500);
-            }
+    cells.forEach((cell, i) => {
+        cell.classList.add('locked');
+        if (i === qData.correct) cell.classList.add('correct');
+        if (i === selected && selected !== qData.correct) cell.classList.add('incorrect');
+    });
 
-            updateStats();
-        }
+    qEl.classList.add('exit');
 
-        function showResult(isCorrect) {
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `
-                <div class="result-message ${isCorrect ? 'correct' : 'incorrect'}">
-                    ${isCorrect ? '¡Correcto!' : 'Incorrecto'}
-                </div>
-            `;
-        }
+    setTimeout(() => {
+        gameState.currentCategory++;
+        renderCurrentQuestion();
+    }, 500);
+}
 
-        function showVictory() {
-            const modal = document.getElementById('modal');
-            const content = document.getElementById('modalContent');
+function updateStats() {
+    document.getElementById('attempts').textContent = gameState.attempts;
+    document.getElementById('progress').textContent =
+        `${gameState.correctAnswers.size}/${categories.length}`;
+}
 
-            content.innerHTML = `
-                <div class="victory-modal">
-                    <div class="victory-title">🎉</div>
-                    <div class="victory-message">¡Enhorabuena!</div>
-                    <div class="victory-stats">
-                        <p><strong>Has completado el trivial</strong></p>
-                        <p>Total de intentos: <strong>${gameState.attempts}</strong></p>
-                        <p>Categorías acertadas: <strong>${gameState.correctAnswers.size}/${categories.length}</strong></p>
-                    </div>
-                    <button class="btn" onclick="playAgain()">Jugar de Nuevo</button>
-                </div>
-            `;
+initGrid();
+</script>
 
-            modal.classList.add('active');
-        }
-
-        function playAgain() {
-            document.getElementById('modal').classList.remove('active');
-            resetGame();
-        }
-
-        function updateStats() {
-            document.getElementById('attempts').textContent = gameState.attempts;
-            document.getElementById('progress').textContent = `${gameState.correctAnswers.size}/${categories.length}`;
-        }
-
-        function resetGame() {
-            gameState = {
-                attempts: 0,
-                correctAnswers: new Set(),
-                currentRound: {}
-            };
-            initGrid();
-            updateStats();
-        }
-
-        function toggleTheme() {
-            document.body.style.background = document.body.style.background === 'rgb(51, 51, 51)' ? '#f5f5f5' : '#333';
-            document.querySelector('.theme-toggle').textContent = 
-                document.body.style.background === 'rgb(51, 51, 51)' ? '☀️' : '🌙';
-        }
-
-        document.getElementById('modal').onclick = (e) => {
-            if (e.target.id === 'modal') {
-                e.target.classList.remove('active');
-            }
-        };
-
-        initGrid();
-    </script>
 </body>
 </html>
