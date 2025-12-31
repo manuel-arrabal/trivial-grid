@@ -1,148 +1,459 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trivial Compacto</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    padding: 2rem 0;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trivial Grid</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  .card {
-    background: #fff;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    max-width: 450px;
-    width: 90%;
-  }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      color: #111827;
+    }
 
-  .question {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
+    .container {
+      max-width: 720px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
 
-  .option {
-    padding: 0.5rem;
-    border: 2px solid #ccc;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    user-select: none;
-  }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
 
-  .option.correct {
-    border-color: #4CAF50;
-    background-color: #e6f7e6;
-  }
+    .subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+      font-weight: 500;
+    }
 
-  .option.incorrect {
-    border-color: #f44336;
-    background-color: #ffe6e6;
-  }
+    .game-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-  .retry-btn {
-    margin-top: 1rem;
-    padding: 0.6rem 1rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #1976d2;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    display: none;
-    width: 100%;
-  }
+    .stats {
+      display: flex;
+      justify-content: flex-end;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
 
-  .retry-btn:hover {
-    background-color: #135ba1;
-  }
-</style>
+    .stat {
+      text-align: right;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 120px 1fr 1fr 1fr;
+      grid-auto-rows: 80px;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .category-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 12px;
+      font-weight: 700;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    .question-cell {
+      grid-column: 2 / span 3;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-cell::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .question-cell:hover::before {
+      opacity: 1;
+    }
+
+    .question-cell.option-0:hover {
+      border-color: #10b981;
+    }
+
+    .cell {
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      background: #ffffff;
+      font-size: 0.85rem;
+      padding: 12px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .cell:hover:not(.correct):not(.incorrect):not(.locked) {
+      border-color: #6366f1;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+    }
+
+    .cell.correct,
+    .question-cell.correct {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white !important;
+      border-color: #10b981;
+      cursor: default;
+      transform: scale(1.02);
+    }
+
+    .cell.incorrect,
+    .question-cell.incorrect {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white !important;
+      border-color: #ef4444;
+    }
+
+    .cell.locked,
+    .question-cell.locked {
+      cursor: default;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .shake {
+      animation: shake 0.3s ease-in-out;
+    }
+
+    .reset-btn {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .reset-btn:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    footer {
+      width: 100%;
+      max-width: 720px;
+      text-align: center;
+      color: #9ca3af;
+      padding: 20px;
+      font-size: 0.8rem;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 100px 1fr 1fr 1fr;
+        grid-auto-rows: 70px;
+        gap: 8px;
+      }
+      
+      .category-label {
+        font-size: 0.7rem;
+        padding-top: 8px;
+      }
+      
+      .question-cell,
+      .cell {
+        font-size: 0.8rem;
+        padding: 12px 8px;
+      }
+      
+      .game-card {
+        padding: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1>Trivial Grid</h1>
+      <div class="subtitle">Cultura general española</div>
+    </header>
 
-<div class="card">
-  <div class="question" id="question"></div>
-  <div class="options">
-    <div class="option" onclick="checkAnswer(this,0)"></div>
-    <div class="option" onclick="checkAnswer(this,1)"></div>
-    <div class="option" onclick="checkAnswer(this,2)"></div>
+    <div class="game-card">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Intentos</div>
+          <div class="stat-value" id="attempts">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Progreso</div>
+          <div class="stat-value" id="progress">0/6</div>
+        </div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <button class="reset-btn" onclick="resetGame()">Nueva Partida</button>
+    </div>
   </div>
-  <button class="retry-btn" id="retryBtn" onclick="startQuiz()">Volver a intentarlo</button>
-</div>
 
-<script>
-// Aquí irían tus preguntas completas, ejemplo reducido:
-const questions = [
-  {q:"¿De qué país es originario el queso brie?", options:["Italia","Francia","Suiza"], correct:1},
-  {q:"¿Cuál es la moneda de México?", options:["Peso mexicano","Dólar","Euro"], correct:0},
-  {q:"¿De qué colores es la bandera de Japón?", options:["Blanca y roja","Azul y blanca","Roja y negra"], correct:0},
-  // ... todas tus demás preguntas
-];
+  <footer>
+    <p><strong>Versión Beta</strong> · No se recopilan datos personales</p>
+    <p>© 2025 Trivial Grid · Licencia MIT</p>
+  </footer>
 
-let currentQuestion = 0;
-let score = 0;
+  <script>
+    // Base de datos de preguntas (3 opciones por pregunta)
+    const trivialQuestions = {
+      'Geografía': [
+        { q: '¿Cuál es la capital de España?', options: ['Barcelona', 'Madrid', 'Valencia'], correct: 1 },
+        { q: '¿Qué río pasa por Zaragoza?', options: ['Tajo', 'Ebro', 'Guadalquivir'], correct: 1 },
+        { q: '¿Cuántas comunidades autónomas?', options: ['15', '17', '19'], correct: 1 }
+      ],
+      'Entretenimiento': [
+        { q: '¿Quién dirigió "El Laberinto del Fauno"?', options: ['Almodóvar', 'Del Toro', 'Amenábar'], correct: 1 },
+        { q: '¿Quién cantó "Mediterráneo"?', options: ['Sabina', 'Serrat', 'Aute'], correct: 1 }
+      ],
+      'Historia': [
+        { q: '¿Año del descubrimiento de América?', options: ['1492', '1512', '1488'], correct: 0 },
+        { q: '¿Fin de la Guerra Civil Española?', options: ['1939', '1936', '1945'], correct: 0 }
+      ],
+      'Arte y Literatura': [
+        { q: '¿Autor de "Don Quijote"?', options: ['Cervantes', 'Lope de Vega', 'Velázquez'], correct: 0 },
+        { q: '¿Pintor de "Las Meninas"?', options: ['Goya', 'Velázquez', 'El Greco'], correct: 1 }
+      ],
+      'Ciencias y Naturaleza': [
+        { q: '¿Planeta más grande?', options: ['Júpiter', 'Saturno', 'Neptuno'], correct: 0 },
+        { q: '¿Huesos en cuerpo humano adulto?', options: ['206', '180', '230'], correct: 0 }
+      ],
+      'Deportes y Pasatiempos': [
+        { q: '¿Año del Mundial de España?', options: ['2010', '2006', '2014'], correct: 0 },
+        { q: '¿Tenista con más Grand Slams?', options: ['Nadal', 'Alcaraz', 'Ferrer'], correct: 0 }
+      ]
+    };
 
-function startQuiz() {
-  currentQuestion = 0;
-  score = 0;
-  document.getElementById('retryBtn').style.display = 'none';
-  showQuestion();
-}
+    const categories = Object.keys(trivialQuestions);
+    let gameState = {
+      attempts: 0,
+      correctAnswers: new Set(),
+      currentRound: {}
+    };
 
-function showQuestion() {
-  if(currentQuestion >= questions.length){
-    document.getElementById('question').textContent = `Juego terminado. Puntuación: ${score}/${questions.length}`;
-    document.querySelectorAll('.option').forEach(o => o.style.display='none');
-    if(score < questions.length) document.getElementById('retryBtn').style.display='block';
-    return;
-  }
+    function initGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
 
-  const q = questions[currentQuestion];
-  document.getElementById('question').textContent = q.q;
-  const optionElements = document.querySelectorAll('.option');
-  optionElements.forEach((el,i)=>{
-    el.textContent = q.options[i];
-    el.classList.remove('correct','incorrect');
-    el.style.pointerEvents = "auto";
-    el.style.display = "block";
-  });
-}
+      categories.forEach((cat, catIndex) => {
+        // Columna 1: Nombre categoría (vertical)
+        const label = document.createElement('div');
+        label.className = 'category-label';
+        label.textContent = cat;
+        grid.appendChild(label);
 
-function checkAnswer(el, idx){
-  const q = questions[currentQuestion];
-  const optionElements = document.querySelectorAll('.option');
-  optionElements.forEach(o => o.style.pointerEvents = "none");
+        // Columna 2: Pregunta + Opción 0 (clickeable)
+        const qCell = document.createElement('div');
+        qCell.className = 'question-cell option-0';
+        qCell.dataset.category = catIndex;
+        qCell.dataset.option = 0;
+        qCell.id = `question-${catIndex}`;
+        grid.appendChild(qCell);
 
-  if(idx === q.correct){
-    el.classList.add('correct');
-    score++;
-  } else {
-    el.classList.add('incorrect');
-    optionElements[q.correct].classList.add('correct');
-  }
+        // Columnas 3 y 4: Opciones 1 y 2
+        for (let i = 1; i < 3; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.dataset.category = catIndex;
+          cell.dataset.option = i;
+          grid.appendChild(cell);
+        }
+      });
 
-  setTimeout(()=>{
-    currentQuestion++;
-    showQuestion();
-  }, 500);
-}
+      startNewRound();
+      renderGrid();
+      attachEventListeners();
+      updateStats();
+    }
 
-startQuiz();
-</script>
+    function startNewRound() {
+      gameState.currentRound = {};
+      categories.forEach((cat, catIndex) => {
+        if (!gameState.correctAnswers.has(catIndex)) {
+          const questions = trivialQuestions[cat];
+          const randomQ = questions[Math.floor(Math.random() * questions.length)];
+          gameState.currentRound[catIndex] = randomQ;
+        }
+      });
+    }
 
+    function renderGrid() {
+      categories.forEach((cat, catIndex) => {
+        const questionData = gameState.currentRound[catIndex];
+        const qCell = document.getElementById(`question-${catIndex}`);
+        const cells = document.querySelectorAll(`[data-category="${catIndex}"].cell`);
+
+        if (gameState.correctAnswers.has(catIndex)) {
+          qCell.className = 'question-cell correct locked';
+          qCell.textContent = '✅ Completada';
+          cells.forEach(cell => {
+            cell.className = 'cell correct locked';
+            cell.textContent = '✓';
+          });
+          return;
+        }
+
+        // Pregunta activa
+        qCell.className = 'question-cell option-0';
+        qCell.textContent = questionData.options[0];
+        cells[0].textContent = questionData.options[1];
+        cells[1].textContent = questionData.options[2];
+      });
+    }
+
+    function attachEventListeners() {
+      document.querySelectorAll('[data-category]').forEach(cell => {
+        cell.onclick = function() {
+          const catIndex = parseInt(this.dataset.category);
+          const optIndex = parseInt(this.dataset.option);
+          handleAnswer(catIndex, optIndex, this);
+        };
+      });
+    }
+
+    function handleAnswer(catIndex, optionIndex, clickedElement) {
+      if (gameState.correctAnswers.has(catIndex)) return;
+
+      const questionData = gameState.currentRound[catIndex];
+      const correctIndex = questionData.correct;
+
+      gameState.attempts++;
+      updateStats();
+
+      const qCell = document.getElementById(`question-${catIndex}`);
+      const allCells = document.querySelectorAll(`[data-category="${catIndex}"]`);
+
+      if (optionIndex === correctIndex) {
+        // ¡Correcto!
+        gameState.correctAnswers.add(catIndex);
+        
+        allCells.forEach(cell => {
+          cell.classList.add('correct', 'locked');
+        });
+        
+        qCell.textContent = '✅ ¡Correcto!';
+        
+        if (gameState.correctAnswers.size === categories.length) {
+          setTimeout(() => {
+            alert(`🎉 ¡TRIVIAL COMPLETADO!\n\nIntentos totales: ${gameState.attempts}\n\n¡Enhorabuena!`);
+          }, 500);
+        }
+      } else {
+        // Incorrecto
+        clickedElement.classList.add('incorrect', 'shake');
+        setTimeout(() => {
+          clickedElement.classList.remove('shake');
+        }, 300);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('attempts').textContent = gameState.attempts;
+      document.getElementById('progress').textContent = 
+        `${gameState.correctAnswers.size}/${categories.length}`;
+    }
+
+    function resetGame() {
+      gameState = {
+        attempts: 0,
+        correctAnswers: new Set(),
+        currentRound: {}
+      };
+      initGrid();
+    }
+
+    // Inicializar
+    initGrid();
+  </script>
 </body>
 </html>
